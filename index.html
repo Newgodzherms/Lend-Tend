@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex,nofollow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5">
+    <title>Origins - House Payment Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0A3D62;
+            --secondary-blue: #1C658C;
+            --accent-green: #38A3A5;
+            --light-grey: #F0F4F8;
+            --dark-text: #2C3E50;
+            --light-text: #ECF0F1;
+            --border-color: #B0C4DE;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 10px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-grey);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--primary-blue);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light-text);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header i {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            background: var(--secondary-blue);
+            padding: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            padding: 0.7rem 1.1rem;
+            background: var(--primary-blue);
+            color: var(--light-text);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-green);
+            transform: translateY(-2px);
+            color: var(--primary-blue);
+        }
+        
+        /* NEW: Style for the Logout button */
+        .btn#logoutBtn:hover {
+            background: #e74c3c; /* A distinct red for logout */
+        }
+
+
+        .btn i {
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2.5rem auto;
+            background: #FFFFFF;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .active {
+            display: block;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 1.7rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate; /* Use separate for rounded corners */
+            border-spacing: 0; /* No space between cell borders */
+            margin-top: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Ensures rounded corners are visible */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        th {
+            background: var(--secondary-blue);
+            color: var(--light-text);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        th:first-child { border-top-left-radius: var(--border-radius); }
+        th:last-child { border-top-right-radius: var(--border-radius); }
+
+        tr:last-child td { border-bottom: none; } /* Remove bottom border for last row */
+
+        tbody tr:nth-child(even) {
+            background: var(--light-grey);
+        }
+
+        label {
+            display: block;
+            margin: 1rem 0 0.4rem;
+            font-weight: 500;
+            color: var(--primary-blue);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 2px rgba(56, 163, 165, 0.3);
+        }
+
+        button[type="submit"], button:not(.btn) {
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-blue);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button[type="submit"]:hover, button:not(.btn):hover {
+            background: var(--accent-green);
+            transform: translateY(-2px);
+        }
+        
+        input:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btns button {
+            margin-top: 0; /* Override default button margin */
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            background: var(--secondary-blue);
+        }
+        .action-btns button.delete-btn:hover {
+            background: #E74C3C; /* Red for delete/reverse */
+        }
+        .action-btns button[title="View Receipt"] {
+            background: var(--accent-green);
+        }
+        .action-btns button[title="View Receipt"]:hover {
+            background: var(--primary-blue);
+        }
+        .action-btns button[title="Remove Late Fees"] {
+            background: #f39c12; /* Orange for adjustments */
+        }
+        .action-btns button[title="Remove Late Fees"]:hover {
+            background: #e67e22;
+        }
+        .action-btns button[title="Print History"] {
+            background: var(--accent-green);
+        }
+        .action-btns button[title="Print History"]:hover {
+            background: var(--primary-blue);
+        }
+        .action-btns button[title="Reverse Payment"] {
+            background: #E74C3C; /* Red for reversal */
+        }
+        .action-btns button[title="Reverse Payment"]:hover {
+            background: #C0392B;
+        }
+        /* NEW: Refinance button color */
+        .action-btns button[title="Refinance Loan"] {
+            background: #3498db; /* A nice blue for refinance */
+        }
+        .action-btns button[title="Refinance Loan"]:hover {
+            background: #2980b9;
+        }
+
+        /* Payment amount display */
+        .payment-display {
+            background: #e6f7f6; /* Lighter version of accent-green */
+            border: 1px solid #a7e0e2;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .payment-display h3 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .payment-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .payment-breakdown {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .payment-breakdown div {
+            padding: 0.8rem;
+            background: #fdfdfd;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        .payment-breakdown span {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        /* Principal/Interest Allocation Display */
+        .allocation-display {
+            background: #e8f4ff;
+            border: 1px solid #b8daff;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .allocation-display h4 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .allocation-bars {
+            display: flex;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 0.8rem auto;
+            max-width: 500px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .principal-portion {
+            background: #28a745; /* Green */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .interest-portion {
+            background: #dc3545; /* Red */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .allocation-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            max-width: 500px;
+            margin: 0 auto;
+            margin-top: 0.5rem;
+        }
+        .allocation-labels span {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        /* Receipt Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            color: var(--dark-text);
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            margin: 2rem auto;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .receipt-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .receipt-details span:nth-child(odd) {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .receipt-details span:nth-child(even) {
+            text-align: right;
+        }
+
+        .receipt-total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--border-color);
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent-green);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Adjustment Modal specific styles */
+        .adjustment-form label {
+            text-align: left;
+        }
+        .adjustment-content small {
+            display: block;
+            margin-top: -0.5rem;
+            margin-bottom: 0.8rem;
+            color: #777;
+            font-size: 0.85rem;
+        }
+        .adjustment-content button:last-child {
+            background: #E74C3C; /* Red for cancel */
+        }
+        .adjustment-content button:last-child:hover {
+            background: #C0392B;
+        }
+        
+        /* History Modal specific styles */
+        .history-content table { width: 100%; }
+        .history-content table th { text-align: center; }
+        .history-content table td { text-align: right; }
+        .history-content table td:first-child { text-align: left; }
+
+        /* Print styles for receipt and history */
+        @media print {
+            body * { visibility: hidden; }
+            .modal, .modal * { visibility: visible; background-color: white; color: black; }
+            .modal { position: absolute; left: 0; top: 0; width: 100%; height: auto; box-shadow: none; padding: 1rem; }
+            .modal-content { box-shadow: none; border: 1px solid #ccc; padding: 1rem; }
+            .modal-buttons { display: none; }
+        }
+        
+        /* Amortization Calculator Styles */
+        .calculator-section {
+            background: #fff;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+            margin-bottom: 2rem;
+        }
+        .calculator-inputs label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        .calculator-inputs input {
+            margin-top: 0.6rem;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .calculator-inputs:focus, .calculator-inputs select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 2px rgba(56, 163, 165, 0.3);
+        }
+
+        .calculator-results { margin-top: 2rem; }
+        .calculator-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .calculator-table th {
+            background-color: var(--secondary-blue);
+            color: white;
+            padding: 0.9rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .calculator-table td {
+            padding: 0.7rem;
+            border-bottom: 1px solid #E0E0E0;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        .calculator-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+        .calculator-summary {
+            background: #e8f4ff;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border: 1px solid #b8daff;
+        }
+        .calculator-summary h3 {
+            margin: 0;
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+        }
+        
+        /* Payment Mode Toggle */
+        .payment-mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-mode-toggle button {
+            background-color: var(--light-grey);
+            color: var(--dark-text);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.7rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .payment-mode-toggle button.active {
+            background-color: var(--primary-blue);
+            color: var(--light-text);
+            border-color: var(--primary-blue);
+        }
+
+        .payment-mode-toggle button:hover { background-color: var(--border-color); }
+        .payment-mode-toggle button.active:hover { background-color: var(--secondary-blue); }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav { flex-direction: column; align-items: stretch; padding: 0.5rem; }
+            .btn { margin: 0.3rem 0; justify-content: center; }
+            .container { margin: 1.5rem auto; padding: 1.5rem; }
+            h2 { font-size: 1.5rem; padding-bottom: 0.8rem; }
+            table, .payment-breakdown { font-size: 0.9rem; }
+            th, td { padding: 0.7rem; }
+            .payment-amount { font-size: 1.8rem; }
+            .modal-content { padding: 1.5rem; }
+            .modal-header h2 { font-size: 1.6rem; }
+            .receipt-details { grid-template-columns: 1fr 1fr; font-size: 0.95rem; }
+        }
+
+        @media (max-width: 480px) {
+            header { font-size: 1.4rem; }
+            .btn { font-size: 0.9rem; padding: 0.6rem 0.8rem; }
+            .container { padding: 1rem; }
+            h2 { font-size: 1.3rem; }
+            .payment-breakdown { grid-template-columns: 1fr; }
+            .modal-content { width: 95%; padding: 1rem; }
+            .receipt-details {
+                grid-template-columns: 1fr;
+            }
+            .receipt-details span:nth-child(even) {
+                text-align: left;
+                margin-bottom: 0.5rem;
+            }
+            .receipt-details span:nth-child(odd) {
+                border-bottom: 1px dashed #eee;
+                padding-bottom: 0.3rem;
+                margin-top: 0.5rem;
+            }
+        }
+        
+        /* Login Screen Styles */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .login-container h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .login-container p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .login-container input {
+            text-align: center;
+        }
+        .login-container button {
+            width: 100%;
+        }
+
+        /* Checkbox style for login screen */
+        .login-container .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .login-container .checkbox-container label {
+            margin: 0;
+            font-weight: 400;
+        }
+        .login-container .checkbox-container input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-container">
+        <h2>Origins Login</h2>
+        <p>Please enter the password to access the system.</p>
+        <form id="loginForm">
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="rememberMeCheckbox">
+                <label for="rememberMeCheckbox">Remember my login</label>
+            </div>
+
+            <button type="submit"><i class="fas fa-lock-open"></i> Login</button>
+        </form>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <header>
+            <i class="fas fa-home"></i> Origins House Payment Management
+        </header>
+
+        <nav>
+            <span class="btn" onclick="showPage('home')"><i class="fas fa-chart-line"></i> Home</span>
+            <span class="btn" onclick="showPage('houses')"><i class="fas fa-house-user"></i> View Houses</span>
+            <span class="btn" onclick="showPage('addCustomer')"><i class="fas fa-user-plus"></i> Add Customer</span>
+            <span class="btn" onclick="showPage('payments')"><i class="fas fa-receipt"></i> Record Payment</span>
+            <span class="btn" onclick="showPage('payoff')"><i class="fas fa-dollar-sign"></i> Payoff Balances</span>
+            <span class="btn" onclick="showPage('collections')"><i class="fas fa-clipboard-list"></i> Collections</span>
+            <span class="btn" onclick="showPage('calculator')"><i class="fas fa-calculator"></i> Payment Calculator</span>
+            <span class="btn" id="logoutBtn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</span>
+        </nav>
+
+        <div id="home" class="container active">
+            <h2>Welcome to Origins</h2>
+            <p>This application helps you efficiently manage customer accounts, track house payments, calculate payoff balances, and generate reports. Navigate through the menu above to get started.</p>
+            <ul>
+                <li><strong>Customer Management:</strong> Add new clients with detailed loan information.</li>
+                <li><strong>Payment Tracking:</strong> Record payments received and view historical data.</li>
+                <li><strong>Financial Overview:</strong> See current loan balances, escrow, and late fees.</li>
+                <li><strong>Reporting:</strong> Generate monthly collection summaries and commissions.</li>
+                <li><strong>Amortization Calculator:</strong> Plan and visualize loan payment schedules.</li>
+            </ul>
+            <p>All data is securely stored in your browser's local storage, ensuring your information is always available when you return to the application.</p>
+        </div>
+
+        <div id="addCustomer" class="container">
+            <h2>Add New Customer Account</h2>
+            <form id="customerForm">
+                <label for="name">Customer Name:</label>
+                <input type="text" id="name" required placeholder="John Doe">
+
+                <label for="address">House Address:</label>
+                <input type="text" id="address" required placeholder="123 Main St, Anytown, USA">
+                
+                <label for="loanStartDate">Loan Start Date:</label>
+                <input type="date" id="loanStartDate" required>
+
+                <label for="balance">Loan Amount ($):</label>
+                <input type="number" id="balance" step="0.01" required placeholder="250000.00">
+
+                <label for="term">Loan Term (months):</label>
+                <input type="number" id="term" required placeholder="360">
+
+                <label for="interest">Annual Interest Rate (%):</label>
+                <input type="number" id="interest" step="0.01" required placeholder="5.5">
+
+                <label for="escrow">Monthly Escrow Amount ($):</label>
+                <input type="number" id="escrow" step="0.01" value="0" placeholder="Optional, e.g., 250.00">
+
+                <label for="dueDay">Monthly Due Day (1–28):</label>
+                <input type="number" id="dueDay" min="1" max="28" required placeholder="1">
+                
+                <div class="payment-display">
+                    <h3>Estimated Monthly Payment</h3>
+                    <div class="payment-amount" id="paymentAmount">$0.00</div>
+                    <div class="payment-breakdown">
+                        <div>P&I: <span id="principalInterest">$0.00</span></div>
+                        <div>Escrow: <span id="escrowAmount">$0.00</span></div>
+                        <div><strong>Total Monthly:</strong> <span id="totalMonthly">$0.00</span></div>
+                    </div>
+                </div>
+                
+                <div class="allocation-display">
+                    <h4>Initial Payment Allocation (Estimate)</h4>
+                    <div class="allocation-bars">
+                        <div class="principal-portion" id="principalPortion" style="width: 50%">50% Principal</div>
+                        <div class="interest-portion" id="interestPortion" style="width: 50%">50% Interest</div>
+                    </div>
+                    <div class="allocation-labels">
+                        <span id="principalAllocAmount">$0.00 to Principal</span>
+                        <span id="interestAllocAmount">$0.00 to Interest</span>
+                    </div>
+                </div>
+                
+                <button type="submit"><i class="fas fa-save"></i> Save Customer</button>
+            </form>
+        </div>
+
+        <div id="houses" class="container">
+            <h2>Saved Customers & Properties</h2>
+            <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Payments Due</th>
+                        <th>Current Balance</th>
+                        <th>Monthly P&I</th>
+                        <th>Escrow</th>
+                        <th>Total Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="houseTable"></tbody>
+            </table>
+            </div>
+        </div>
+
+        <div id="payments" class="container">
+            <h2>Record New Payment</h2>
+            <form id="paymentForm">
+                <label for="pName">Select Customer:</label>
+                <select id="pName" required></select>
+                
+                <div class="payment-display" id="paymentsDueSummary" style="display: none;">
+                    <h3>Payment Summary</h3>
+                    <div class="payment-breakdown">
+                        <div>One Full Payment: <span id="onePaymentAmountDisplay"></span></div>
+                        <div id="paymentsDueCount">0 Payments Due</div>
+                        <div id="lateFeeNote" style="display: none;">Accrued Late Fees: <span id="lateFeeAmountDisplay">$0.00</span></div>
+                    </div>
+                </div>
+                
+                <div class="payment-mode-toggle">
+                    <button type="button" id="manualModeBtn" class="active" onclick="setPaymentMode('manual')">Manual Entry</button>
+                    <button type="button" id="paymentsModeBtn" onclick="setPaymentMode('payments')">Number of Payments</button>
+                </div>
+
+                <div id="manualEntryMode">
+                    <label for="regular">Regular Payment (P&I) ($):</label>
+                    <input type="number" id="regular" step="0.01" required value="0.00">
+
+                    <label for="principal">Additional Principal Payment ($):</label>
+                    <input type="number" id="principal" step="0.01" value="0.00">
+
+                    <label for="escrowPayment">Escrow Payment ($):</label>
+                    <input type="number" id="escrowPayment" step="0.01" value="0.00">
+                
+                    <label for="lateFeePayment">Late Fee Payment ($):</label>
+                    <input type="number" id="lateFeePayment" step="0.01" value="0.00">
+                </div>
+                
+                <div id="paymentsMode" style="display: none;">
+                    <label for="numberOfPayments">Number of Payments to Make:</label>
+                    <input type="number" id="numberOfPayments" min="1" step="1" value="1">
+                    
+                    <label for="calcRegularPayment">Calculated Regular P&I ($):</label>
+                    <input type="number" id="calcRegularPayment" step="0.01" readonly disabled>
+                    
+                    <label for="calcEscrowPayment">Calculated Escrow ($):</label>
+                    <input type="number" id="calcEscrowPayment" step="0.01" readonly disabled>
+                
+                    <label for="calcLateFeePayment">Pay Full Late Fee Balance ($):</label>
+                    <input type="number" id="calcLateFeePayment" step="0.01" readonly disabled>
+                    
+                    <label for="calcTotalPayment">Total Payment ($):</label>
+                    <input type="number" id="calcTotalPayment" step="0.01" readonly disabled>
+                </div>
+                
+                <button type="submit"><i class="fas fa-hand-holding-usd"></i> Add Payment</button>
+            </form>
+
+            <h3 style="margin-top: 3rem; color: var(--primary-blue);">Recent Payment History (Last 10)</h3>
+            <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Escrow</th>
+                        <th>Late Fees</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentTable"></tbody>
+            </table>
+            </div>
+        </div>
+
+        <div id="payoff" class="container">
+            <h2>Current Loan & Escrow Balances</h2>
+            <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Loan Balance</th>
+                        <th>Escrow Balance</th>
+                        <th>Late Fees</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="payoffTable"></tbody>
+            </table>
+            </div>
+        </div>
+        
+        <div id="collections" class="container">
+            <h2>Monthly Collections Report</h2>
+            <p>This report summarizes all payments received and calculates commissions on a month-to-month basis.</p>
+            <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month/Year</th>
+                        <th>Total Regular Payments</th>
+                        <th>Total Principal Payments</th>
+                        <th>Total Late Payments</th>
+                        <th>Regular Payments Commission (5%)</th>
+                        <th>Principal & Late Fee Commission (2.5%)</th>
+                        <th>Total Commission</th>
+                    </tr>
+                </thead>
+                <tbody id="collectionsTable"></tbody>
+            </table>
+            </div>
+        </div>
+        
+        <div id="calculator" class="container">
+            <h2>Amortization Calculator</h2>
+            <p>Use this tool to calculate monthly payments and see a full amortization schedule for any loan.</p>
+            <div class="calculator-section">
+                <div class="calculator-inputs">
+                    <label>Loan Amount ($)
+                        <input type="number" id="calcLoanAmount" placeholder="300000">
+                    </label>
+                    <label>Annual Interest Rate (%)
+                        <input type="number" id="calcInterestRate" step="0.01" placeholder="5.25">
+                    </label>
+                    <label>Loan Term (Years)
+                        <input type="number" id="calcLoanTerm" placeholder="30">
+                    </label>
+                    <button onclick="calculateAmortization()">Calculate</button>
+                </div>
+                <div class="calculator-results">
+                    <div class="calculator-summary">
+                        <h3>Monthly P&I: <span id="calcMonthlyPaymentResult">$0.00</span></h3>
+                        <p>Total Interest Paid: <span id="calcTotalInterestResult">$0.00</span> | Total Paid: <span id="calcTotalPaidResult">$0.00</span></p>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="calculator-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Principal</th>
+                                <th>Interest</th>
+                                <th>Remaining Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="amortizationTableBody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="receiptModal" class="modal">
+            <div id="receiptContent" class="modal-content">
+                <div class="modal-header">
+                    <h2>Payment Receipt</h2>
+                    <p>Origins House Payment Management</p>
+                </div>
+                <div class="receipt-details">
+                    <span>Transaction ID:</span> <span id="receipt-id"></span>
+                    <span>Payment Date:</span> <span id="receipt-date"></span>
+                    <span>Customer Name:</span> <span id="receipt-name"></span>
+                    <span>Property Address:</span> <span id="receipt-address"></span>
+                    <hr style="grid-column: 1 / -1; border: 0; border-top: 1px dashed var(--border-color); margin: 0.5rem 0;">
+                    <span>Principal Applied:</span> <span id="receipt-principal"></span>
+                    <span>Interest Applied:</span> <span id="receipt-interest"></span>
+                    <span>Escrow Paid:</span> <span id="receipt-escrow"></span>
+                    <span>Late Fees Paid:</span> <span id="receipt-latefee"></span>
+                </div>
+                <div class="receipt-total">
+                    <span>Total Amount Paid:</span>
+                    <span id="receipt-total"></span>
+                </div>
+                <div class="modal-footer">
+                    Thank you for your payment!
+                </div>
+                <div class="modal-buttons">
+                    <button onclick="printModalContent('receiptContent')"><i class="fas fa-print"></i> Print</button>
+                    <button onclick="closeModal('receiptModal')"><i class="fas fa-times"></i> Close</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="historyModal" class="modal">
+            <div id="historyContent" class="modal-content history-content">
+                <div class="modal-header">
+                    <h2>Full Payment History</h2>
+                    <p id="history-customer-info"></p>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Regular P&I</th>
+                            <th>Additional Principal</th>
+                            <th>Escrow</th>
+                            <th>Late Fee</th>
+                            <th>Total Paid</th>
+                            <th>New Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullHistoryTableBody"></tbody>
+                </table>
+                </div>
+                <div class="modal-footer">
+                    End of payment history.
+                </div>
+                <div class="modal-buttons">
+                    <button onclick="printModalContent('historyContent')"><i class="fas fa-print"></i> Print History</button>
+                    <button onclick="closeModal('historyModal')"><i class="fas fa-times"></i> Close</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="refinanceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Refinance Loan</h2>
+                    <p id="refinance-customer-info"></p>
+                </div>
+                <form id="refinanceForm">
+                    <input type="hidden" id="refinanceCustomerId">
+                    <p>
+                        Current Loan Balance: <strong id="refinance-current-balance"></strong><br>
+                        Accrued Late Fees: <strong id="refinance-late-fees"></strong>
+                    </p>
+                    <p>
+                        <strong>Total Payoff Amount: <span id="refinance-total-payoff"></span></strong>
+                        <button type="button" onclick="populateNewLoanAmount()">Use Payoff Amount</button>
+                    </p>
+                    <label for="newLoanAmount">New Loan Amount ($):</label>
+                    <input type="number" id="newLoanAmount" step="0.01" required>
+
+                    <label for="newLoanTerm">New Loan Term (months):</label>
+                    <input type="number" id="newLoanTerm" required>
+
+                    <label for="newInterestRate">New Annual Interest Rate (%):</label>
+                    <input type="number" id="newInterestRate" step="0.01" required>
+
+                    <div class="modal-buttons">
+                        <button type="submit"><i class="fas fa-save"></i> Save New Loan</button>
+                        <button type="button" onclick="closeModal('refinanceModal')"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- STATE MANAGEMENT ---
+    let state = {
+        customers: [],
+        payments: []
+    };
+    
+    // Configurable password and late fee
+    const APP_PASSWORD = '123456789';
+    const LATE_FEE_AMOUNT = 35.00;
+
+    const loadState = () => {
+        const savedCustomers = localStorage.getItem('origins_customers');
+        const savedPayments = localStorage.getItem('origins_payments');
+        if (savedCustomers) {
+            state.customers = JSON.parse(savedCustomers);
+        }
+        if (savedPayments) {
+            state.payments = JSON.parse(savedPayments);
+        }
+    };
+
+    const saveState = () => {
+        localStorage.setItem('origins_customers', JSON.stringify(state.customers));
+        localStorage.setItem('origins_payments', JSON.stringify(state.payments));
+    };
+
+    // --- LOGIN LOGIC ---
+    const loginForm = document.getElementById('loginForm');
+    const loginScreen = document.getElementById('loginScreen');
+    const mainApp = document.getElementById('mainApp');
+    const rememberMeCheckbox = document.getElementById('rememberMeCheckbox');
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const passwordInput = document.getElementById('password').value;
+        if (passwordInput === APP_PASSWORD) {
+            if (rememberMeCheckbox.checked) {
+                localStorage.setItem('origins_logged_in', 'true');
+            } else {
+                localStorage.removeItem('origins_logged_in');
+            }
+
+            loginScreen.style.display = 'none';
+            mainApp.style.display = 'block';
+            initializeApp();
+        } else {
+            alert('Incorrect password. Please try again.');
+            document.getElementById('password').value = '';
+        }
+    });
+    
+    // NEW: Log Out Function
+    window.logout = () => {
+        // Clear the login state from local storage
+        localStorage.removeItem('origins_logged_in');
+        
+        // Hide the main app and show the login screen
+        mainApp.style.display = 'none';
+        loginScreen.style.display = 'block';
+        
+        // Clear the password input field for security
+        document.getElementById('password').value = '';
+    };
+    
+    // --- UTILITY FUNCTIONS ---
+    const formatCurrency = (num) => {
+        if (isNaN(num)) return '$0.00';
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+    };
+
+    const getPaymentsDue = (customer) => {
+        const today = new Date();
+        const lastDueDate = new Date(customer.lastPaymentDueDate);
+        
+        let monthsDiff = (today.getFullYear() - lastDueDate.getFullYear()) * 12;
+        monthsDiff -= lastDueDate.getMonth();
+        monthsDiff += today.getMonth();
+        
+        // Adjust for day of the month
+        if (today.getDate() < customer.dueDay) {
+            monthsDiff--;
+        }
+        
+        return monthsDiff > 0 ? monthsDiff : 0;
+    };
+    
+    const applyLateFees = () => {
+        state.customers.forEach(cust => {
+            const paymentsDueCount = getPaymentsDue(cust);
+            const expectedLateFees = paymentsDueCount * LATE_FEE_AMOUNT;
+
+            // Only update if a change is needed
+            if (cust.lateFees !== expectedLateFees) {
+                cust.lateFees = expectedLateFees;
+                saveState();
+            }
+        });
+    };
+
+    // --- CORE APP LOGIC ---
+
+    // Page Navigation
+    window.showPage = (pageId) => {
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+
+        // Refresh data on page view
+        switch (pageId) {
+            case 'houses':
+                populateHouseTable();
+                break;
+            case 'payments':
+                populatePaymentCustomerSelect();
+                populatePaymentTable();
+                break;
+            case 'payoff':
+                populatePayoffTable();
+                break;
+            case 'collections':
+                populateCollectionsTable();
+                break;
+            case 'addCustomer':
+                 // Set today's date in the form
+                document.getElementById('loanStartDate').valueAsDate = new Date();
+                // FIX: Call the function to display the initial calculation
+                updatePaymentEstimate();
+                break;
+        }
+    };
+
+    // --- ADD CUSTOMER PAGE ---
+    const customerForm = document.getElementById('customerForm');
+    const loanInputs = [
+        document.getElementById('balance'),
+        document.getElementById('term'),
+        document.getElementById('interest'),
+        document.getElementById('escrow')
+    ];
+    
+    const calculateMonthlyPayment = (p, n, i, e = 0) => {
+        if (p <= 0 || n <= 0 || i <= 0) {
+            return { pi: 0, total: e };
+        }
+        const r = (i / 100) / 12;
+        const pi = p * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        const total = pi + e;
+        return { pi, total };
+    };
+
+    const updatePaymentEstimate = () => {
+        const p = parseFloat(document.getElementById('balance').value) || 0;
+        const n = parseInt(document.getElementById('term').value) || 0;
+        const i = parseFloat(document.getElementById('interest').value) || 0;
+        const e = parseFloat(document.getElementById('escrow').value) || 0;
+
+        const payment = calculateMonthlyPayment(p, n, i, e);
+
+        document.getElementById('paymentAmount').textContent = formatCurrency(payment.total);
+        document.getElementById('principalInterest').textContent = formatCurrency(payment.pi);
+        document.getElementById('escrowAmount').textContent = formatCurrency(e);
+        document.getElementById('totalMonthly').textContent = formatCurrency(payment.total);
+        
+        // Update allocation bar
+        if (payment.pi > 0) {
+            const monthlyInterest = p * ((i / 100) / 12);
+            const monthlyPrincipal = payment.pi - monthlyInterest;
+
+            const principalPercent = (monthlyPrincipal / payment.pi) * 100;
+            const interestPercent = (monthlyInterest / payment.pi) * 100;
+            
+            document.getElementById('principalPortion').style.width = `${principalPercent}%`;
+            document.getElementById('principalPortion').textContent = `${Math.round(principalPercent)}% Principal`;
+            document.getElementById('interestPortion').style.width = `${interestPercent}%`;
+            document.getElementById('interestPortion').textContent = `${Math.round(interestPercent)}% Interest`;
+            document.getElementById('principalAllocAmount').textContent = `${formatCurrency(monthlyPrincipal)} to Principal`;
+            document.getElementById('interestAllocAmount').textContent = `${formatCurrency(monthlyInterest)} to Interest`;
+        }
+    };
+    
+    loanInputs.forEach(input => input.addEventListener('input', updatePaymentEstimate));
+
+    customerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const loanAmount = parseFloat(document.getElementById('balance').value);
+        const term = parseInt(document.getElementById('term').value);
+        const interest = parseFloat(document.getElementById('interest').value);
+        const escrow = parseFloat(document.getElementById('escrow').value) || 0;
+        const loanStartDate = document.getElementById('loanStartDate').value;
+        const dueDay = parseInt(document.getElementById('dueDay').value);
+
+        const { pi, total } = calculateMonthlyPayment(loanAmount, term, interest, escrow);
+
+        const startDate = new Date(loanStartDate + 'T00:00:00');
+        let firstDueDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, dueDay);
+        // If start date is after the due day in the same month, first payment is next month
+        if (startDate.getDate() > dueDay) {
+            firstDueDate.setMonth(firstDueDate.getMonth() + 1);
+        }
+
+        const newCustomer = {
+            id: 'cust_' + Date.now(),
+            name: document.getElementById('name').value,
+            address: document.getElementById('address').value,
+            loanStartDate: loanStartDate,
+            originalLoan: loanAmount,
+            balance: loanAmount,
+            term: term,
+            interest: interest,
+            escrow: escrow,
+            dueDay: dueDay,
+            monthlyPI: pi,
+            monthlyTotal: total,
+            escrowBalance: 0,
+            lateFees: 0,
+            lastPaymentDueDate: new Date(firstDueDate.setDate(firstDueDate.getDate()-1)).toISOString(), // Due date for first payment is next month. Set "last due" to day before.
+            paymentHistory: []
+        };
+        
+        state.customers.push(newCustomer);
+        saveState();
+        alert('Customer saved successfully!');
+        customerForm.reset();
+        updatePaymentEstimate();
+        showPage('houses');
+    });
+
+    // --- VIEW HOUSES PAGE ---
+    const populateHouseTable = () => {
+        const tableBody = document.getElementById('houseTable');
+        tableBody.innerHTML = '';
+        state.customers.forEach(cust => {
+            const paymentsDue = getPaymentsDue(cust);
+            // Re-calculate late fees on the fly
+            const lateFees = paymentsDue * LATE_FEE_AMOUNT;
+            cust.lateFees = lateFees;
+            const totalDue = (cust.monthlyTotal * paymentsDue) + lateFees;
+            const row = `
+                <tr>
+                    <td>${cust.name}</td>
+                    <td>${cust.address}</td>
+                    <td style="color: ${paymentsDue > 0 ? 'red' : 'green'}; font-weight: bold;">${paymentsDue}</td>
+                    <td>${formatCurrency(cust.balance)}</td>
+                    <td>${formatCurrency(cust.monthlyPI)}</td>
+                    <td>${formatCurrency(cust.escrow)}</td>
+                    <td>${formatCurrency(totalDue)}</td>
+                    <td class="action-btns">
+                        <button onclick="showFullHistory('${cust.id}')" title="View Payment History"><i class="fas fa-history"></i></button>
+                        <button class="delete-btn" onclick="deleteCustomer('${cust.id}')" title="Delete Customer"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    };
+
+    window.deleteCustomer = (id) => {
+        if (confirm('Are you sure you want to permanently delete this customer and all their payment history?')) {
+            state.customers = state.customers.filter(c => c.id !== id);
+            state.payments = state.payments.filter(p => p.customerId !== id);
+            saveState();
+            showPage('houses');
+        }
+    };
+    
+    // --- PAYMENTS PAGE ---
+    const populatePaymentCustomerSelect = () => {
+        const select = document.getElementById('pName');
+        select.innerHTML = '<option value="">-- Select a Customer --</option>';
+        state.customers.forEach(cust => {
+            select.innerHTML += `<option value="${cust.id}">${cust.name} - ${cust.address}</option>`;
+        });
+        document.getElementById('paymentsDueSummary').style.display = 'none';
+    };
+
+    const updatePaymentSummary = () => {
+        const customerId = document.getElementById('pName').value;
+        if (!customerId) {
+            document.getElementById('paymentsDueSummary').style.display = 'none';
+            return;
+        }
+        const customer = state.customers.find(c => c.id === customerId);
+        const paymentsDue = getPaymentsDue(customer);
+        customer.lateFees = paymentsDue * LATE_FEE_AMOUNT;
+        
+        document.getElementById('onePaymentAmountDisplay').textContent = formatCurrency(customer.monthlyTotal);
+        document.getElementById('paymentsDueCount').textContent = `${paymentsDue} Payments Due`;
+        
+        if (customer.lateFees > 0) {
+            document.getElementById('lateFeeNote').style.display = 'flex';
+            document.getElementById('lateFeeAmountDisplay').textContent = formatCurrency(customer.lateFees);
+        } else {
+            document.getElementById('lateFeeNote').style.display = 'none';
+        }
+
+        document.getElementById('paymentsDueSummary').style.display = 'block';
+        updateCalculatedPayments();
+    };
+    
+    document.getElementById('pName').addEventListener('change', updatePaymentSummary);
+    
+    window.setPaymentMode = (mode) => {
+        if (mode === 'manual') {
+            document.getElementById('manualEntryMode').style.display = 'block';
+            document.getElementById('paymentsMode').style.display = 'none';
+            document.getElementById('manualModeBtn').classList.add('active');
+            document.getElementById('paymentsModeBtn').classList.remove('active');
+        } else {
+            document.getElementById('manualEntryMode').style.display = 'none';
+            document.getElementById('paymentsMode').style.display = 'block';
+            document.getElementById('manualModeBtn').classList.remove('active');
+            document.getElementById('paymentsModeBtn').classList.add('active');
+            updateCalculatedPayments();
+        }
+    };
+
+    const updateCalculatedPayments = () => {
+        const customerId = document.getElementById('pName').value;
+        if (!customerId) return;
+        
+        const customer = state.customers.find(c => c.id === customerId);
+        const numPayments = parseInt(document.getElementById('numberOfPayments').value) || 1;
+        
+        const reg = customer.monthlyPI * numPayments;
+        const esc = customer.escrow * numPayments;
+        const late = customer.lateFees;
+        
+        document.getElementById('calcRegularPayment').value = reg.toFixed(2);
+        document.getElementById('calcEscrowPayment').value = esc.toFixed(2);
+        document.getElementById('calcLateFeePayment').value = late.toFixed(2);
+        document.getElementById('calcTotalPayment').value = (reg + esc + late).toFixed(2);
+    };
+
+    document.getElementById('numberOfPayments').addEventListener('input', updateCalculatedPayments);
+
+    document.getElementById('paymentForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const customerId = document.getElementById('pName').value;
+        if (!customerId) {
+            alert('Please select a customer.');
+            return;
+        }
+
+        const customer = state.customers.find(c => c.id === customerId);
+        let regPayment, addPrincipal, escPayment, lateFeePayment;
+
+        const isManualMode = document.getElementById('manualModeBtn').classList.contains('active');
+        if (isManualMode) {
+            regPayment = parseFloat(document.getElementById('regular').value) || 0;
+            addPrincipal = parseFloat(document.getElementById('principal').value) || 0;
+            escPayment = parseFloat(document.getElementById('escrowPayment').value) || 0;
+            lateFeePayment = parseFloat(document.getElementById('lateFeePayment').value) || 0;
+            
+            // Apply late fee and escrow first
+            customer.lateFees -= lateFeePayment;
+            if (customer.lateFees < 0) customer.lateFees = 0;
+            customer.escrowBalance += escPayment;
+            
+            // Then apply P&I
+            const totalPrincipalAndInterest = regPayment + addPrincipal;
+            const monthlyInterestRate = customer.interest / 100 / 12;
+            const interestForThisPayment = customer.balance * monthlyInterestRate;
+            let principalApplied = totalPrincipalAndInterest - interestForThisPayment;
+            if (principalApplied < 0) principalApplied = 0;
+            const interestApplied = totalPrincipalAndInterest - principalApplied;
+            
+            customer.balance -= principalApplied;
+            if (customer.balance < 0) customer.balance = 0;
+            
+            // Check if one full payment was made to update due date
+            if (regPayment >= customer.monthlyPI - 0.01) {
+                 const newDueDate = new Date(customer.lastPaymentDueDate);
+                 newDueDate.setMonth(newDueDate.getMonth() + 1);
+                 customer.lastPaymentDueDate = newDueDate.toISOString();
+            }
+
+            const paymentRecord = {
+                id: 'pay_' + Date.now(),
+                customerId: customerId,
+                date: new Date().toISOString(),
+                regularPrincipal: principalApplied - addPrincipal,
+                additionalPrincipal: addPrincipal,
+                interest: interestApplied,
+                escrow: escPayment,
+                lateFee: lateFeePayment,
+                total: totalPrincipalAndInterest + escPayment + lateFeePayment,
+                newBalance: customer.balance
+            };
+            
+            state.payments.unshift(paymentRecord);
+            customer.paymentHistory.unshift(paymentRecord.id);
+
+        } else { // Payments Mode
+            const numPayments = parseInt(document.getElementById('numberOfPayments').value) || 1;
+            
+            // Deduct late fees and escrow first
+            customer.lateFees -= customer.lateFees;
+            customer.escrowBalance += customer.escrow * numPayments;
+            
+            let totalPrincipalApplied = 0;
+            let totalInterestApplied = 0;
+            
+            // Loop for each payment period to correctly calculate interest on declining balance
+            for (let i = 0; i < numPayments; i++) {
+                const interestApplied = customer.balance * (customer.interest / 100 / 12);
+                const principalApplied = customer.monthlyPI - interestApplied;
+
+                customer.balance -= principalApplied;
+                totalPrincipalApplied += principalApplied;
+                totalInterestApplied += interestApplied;
+
+                const newDueDate = new Date(customer.lastPaymentDueDate);
+                newDueDate.setMonth(newDueDate.getMonth() + 1);
+                customer.lastPaymentDueDate = newDueDate.toISOString();
+            }
+            if (customer.balance < 0) customer.balance = 0;
+            
+            const paymentRecord = {
+                id: 'pay_' + Date.now(),
+                customerId: customerId,
+                date: new Date().toISOString(),
+                regularPrincipal: totalPrincipalApplied,
+                additionalPrincipal: 0,
+                interest: totalInterestApplied,
+                escrow: customer.escrow * numPayments,
+                lateFee: customer.lateFees,
+                total: totalPrincipalApplied + totalInterestApplied + (customer.escrow * numPayments) + customer.lateFees,
+                newBalance: customer.balance
+            };
+
+            state.payments.unshift(paymentRecord);
+            customer.paymentHistory.unshift(paymentRecord.id);
+        }
+
+        saveState();
+
+        alert(`Payment recorded successfully!\nNew Balance: ${formatCurrency(customer.balance)}`);
+        document.getElementById('paymentForm').reset();
+        setPaymentMode('manual');
+        updatePaymentSummary();
+        populatePaymentTable();
+    });
+
+    const populatePaymentTable = () => {
+        const tableBody = document.getElementById('paymentTable');
+        tableBody.innerHTML = '';
+        const recentPayments = state.payments.slice(0, 10);
+        recentPayments.forEach(p => {
+            const customer = state.customers.find(c => c.id === p.customerId);
+            const row = `
+                <tr>
+                    <td>${customer ? customer.name : 'N/A'}</td>
+                    <td>${new Date(p.date).toLocaleDateString()}</td>
+                    <td>${formatCurrency(p.regularPrincipal + p.additionalPrincipal)}</td>
+                    <td>${formatCurrency(p.interest)}</td>
+                    <td>${formatCurrency(p.escrow)}</td>
+                    <td>${formatCurrency(p.lateFee)}</td>
+                    <td>${formatCurrency(p.total)}</td>
+                    <td class="action-btns">
+                        <button onclick="showReceipt('${p.id}')" title="View Receipt"><i class="fas fa-receipt"></i></button>
+                        <button class="delete-btn" onclick="reversePayment('${p.id}')" title="Reverse Payment"><i class="fas fa-undo"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    };
+
+    // --- PAYOFF & COLLECTIONS PAGES ---
+    const populatePayoffTable = () => {
+        const tableBody = document.getElementById('payoffTable');
+        tableBody.innerHTML = '';
+        state.customers.forEach(cust => {
+             const paymentsDue = getPaymentsDue(cust);
+            // Re-calculate late fees on the fly
+            const lateFees = paymentsDue * LATE_FEE_AMOUNT;
+            cust.lateFees = lateFees;
+            const row = `
+                <tr>
+                    <td>${cust.name}</td>
+                    <td>${cust.address}</td>
+                    <td>${formatCurrency(cust.balance)}</td>
+                    <td>${formatCurrency(cust.escrowBalance)}</td>
+                    <td>${formatCurrency(cust.lateFees)}</td>
+                    <td class="action-btns">
+                         <button onclick="showFullHistory('${cust.id}')" title="View Payment History"><i class="fas fa-history"></i></button>
+                         <button onclick="openRefinanceModal('${cust.id}')" title="Refinance Loan"><i class="fas fa-retweet"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    };
+    
+    const populateCollectionsTable = () => {
+        const tableBody = document.getElementById('collectionsTable');
+        tableBody.innerHTML = '';
+        
+        // Group payments by month and year
+        const monthlyReport = {};
+        state.payments.forEach(p => {
+            const date = new Date(p.date);
+            const monthYear = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+            
+            if (!monthlyReport[monthYear]) {
+                monthlyReport[monthYear] = {
+                    totalRegular: 0,
+                    totalPrincipal: 0,
+                    totalLateFees: 0
+                };
+            }
+            
+            // Correctly categorize regular and additional principal payments
+            monthlyReport[monthYear].totalRegular += p.regularPrincipal + p.interest;
+            monthlyReport[monthYear].totalPrincipal += p.additionalPrincipal;
+            monthlyReport[monthYear].totalLateFees += p.lateFee;
+        });
+        
+        // Generate table rows from the monthly report
+        const sortedMonths = Object.keys(monthlyReport).sort((a, b) => {
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return dateA - dateB;
+        }).reverse(); // Sort in descending order (newest first)
+        
+        sortedMonths.forEach(monthYear => {
+            const data = monthlyReport[monthYear];
+            
+            const regCommission = data.totalRegular * 0.05;
+            const prinLateCommission = (data.totalPrincipal + data.totalLateFees) * 0.025;
+            const totalCommission = regCommission + prinLateCommission;
+            
+            const row = `
+                <tr>
+                    <td>${monthYear}</td>
+                    <td>${formatCurrency(data.totalRegular)}</td>
+                    <td>${formatCurrency(data.totalPrincipal)}</td>
+                    <td>${formatCurrency(data.totalLateFees)}</td>
+                    <td>${formatCurrency(regCommission)}</td>
+                    <td>${formatCurrency(prinLateCommission)}</td>
+                    <td>${formatCurrency(totalCommission)}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    };
+    
+    // --- AMORTIZATION CALCULATOR ---
+    window.calculateAmortization = () => {
+        const p = parseFloat(document.getElementById('calcLoanAmount').value) || 0;
+        const i = parseFloat(document.getElementById('calcInterestRate').value) || 0;
+        const years = parseInt(document.getElementById('calcLoanTerm').value) || 0;
+        const n = years * 12;
+
+        if (p <= 0 || i <= 0 || n <= 0) return;
+
+        const monthlyPayment = calculateMonthlyPayment(p, n, i).pi;
+        const totalPaid = monthlyPayment * n;
+        const totalInterest = totalPaid - p;
+
+        document.getElementById('calcMonthlyPaymentResult').textContent = formatCurrency(monthlyPayment);
+        document.getElementById('calcTotalInterestResult').textContent = formatCurrency(totalInterest);
+        document.getElementById('calcTotalPaidResult').textContent = formatCurrency(totalPaid);
+
+        const tableBody = document.getElementById('amortizationTableBody');
+        tableBody.innerHTML = '';
+        let balance = p;
+        const r = i / 100 / 12;
+        for (let j = 1; j <= n; j++) {
+            const interestPortion = balance * r;
+            const principalPortion = monthlyPayment - interestPortion;
+            balance -= principalPortion;
+            const row = `
+                <tr>
+                    <td>${j}</td>
+                    <td>${formatCurrency(principalPortion)}</td>
+                    <td>${formatCurrency(interestPortion)}</td>
+                    <td>${formatCurrency(balance < 0 ? 0 : balance)}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        }
+    };
+    
+    // --- MODAL LOGIC ---
+    window.openModal = (modalId) => {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'flex';
+    };
+
+    window.closeModal = (modalId) => {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'none';
+    };
+    
+    window.showReceipt = (paymentId) => {
+        const payment = state.payments.find(p => p.id === paymentId);
+        if (!payment) return;
+        const customer = state.customers.find(c => c.id === payment.customerId);
+
+        document.getElementById('receipt-id').textContent = payment.id;
+        document.getElementById('receipt-date').textContent = new Date(payment.date).toLocaleString();
+        document.getElementById('receipt-name').textContent = customer.name;
+        document.getElementById('receipt-address').textContent = customer.address;
+        document.getElementById('receipt-principal').textContent = formatCurrency(payment.regularPrincipal + payment.additionalPrincipal);
+        document.getElementById('receipt-interest').textContent = formatCurrency(payment.interest);
+        document.getElementById('receipt-escrow').textContent = formatCurrency(payment.escrow);
+        document.getElementById('receipt-latefee').textContent = formatCurrency(payment.lateFee);
+        document.getElementById('receipt-total').textContent = formatCurrency(payment.total);
+
+        openModal('receiptModal');
+    };
+
+    window.showFullHistory = (customerId) => {
+        const customer = state.customers.find(c => c.id === customerId);
+        if (!customer) return;
+
+        document.getElementById('history-customer-info').textContent = `${customer.name} - ${customer.address}`;
+        const tableBody = document.getElementById('fullHistoryTableBody');
+        tableBody.innerHTML = '';
+
+        const paymentIds = customer.paymentHistory || [];
+        const customerPayments = paymentIds.map(id => state.payments.find(p => p.id === id)).filter(p => p);
+
+        customerPayments.forEach(p => {
+            const row = `
+                <tr>
+                    <td>${new Date(p.date).toLocaleDateString()}</td>
+                    <td>${formatCurrency(p.regularPrincipal + p.additionalPrincipal)}</td>
+                    <td>${formatCurrency(p.escrow)}</td>
+                    <td>${formatCurrency(p.lateFee)}</td>
+                    <td>${formatCurrency(p.total)}</td>
+                    <td>${formatCurrency(p.newBalance)}</td>
+                    <td class="action-btns">
+                        <button class="delete-btn" onclick="reversePayment('${p.id}', true)" title="Reverse Payment"><i class="fas fa-undo"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        openModal('historyModal');
+    };
+    
+    window.printModalContent = (contentId) => {
+        const content = document.getElementById(contentId).innerHTML;
+        const originalBody = document.body.innerHTML;
+        document.body.innerHTML = content;
+        window.print();
+        document.body.innerHTML = originalBody;
+        // Re-initialize app state after printing because the DOM was replaced
+        initializeApp(); 
+    };
+    
+    // NEW: Refinance Modal Functions
+    window.openRefinanceModal = (customerId) => {
+        const customer = state.customers.find(c => c.id === customerId);
+        if (!customer) return;
+
+        document.getElementById('refinanceCustomerId').value = customer.id;
+        document.getElementById('refinance-customer-info').textContent = `${customer.name} - ${customer.address}`;
+        
+        // Calculate total payoff amount
+        const totalPayoff = customer.balance + customer.lateFees;
+
+        document.getElementById('refinance-current-balance').textContent = formatCurrency(customer.balance);
+        document.getElementById('refinance-late-fees').textContent = formatCurrency(customer.lateFees);
+        document.getElementById('refinance-total-payoff').textContent = formatCurrency(totalPayoff);
+        
+        // Populate current values as defaults
+        document.getElementById('newLoanAmount').value = totalPayoff.toFixed(2);
+        document.getElementById('newLoanTerm').value = customer.term;
+        document.getElementById('newInterestRate').value = customer.interest;
+
+        openModal('refinanceModal');
+    };
+
+    window.populateNewLoanAmount = () => {
+        const customerId = document.getElementById('refinanceCustomerId').value;
+        const customer = state.customers.find(c => c.id === customerId);
+        if (!customer) return;
+        const totalPayoff = customer.balance + customer.lateFees;
+        document.getElementById('newLoanAmount').value = totalPayoff.toFixed(2);
+    };
+
+    document.getElementById('refinanceForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const customerId = document.getElementById('refinanceCustomerId').value;
+        const newLoanAmount = parseFloat(document.getElementById('newLoanAmount').value);
+        const newLoanTerm = parseInt(document.getElementById('newLoanTerm').value);
+        const newInterestRate = parseFloat(document.getElementById('newInterestRate').value);
+
+        if (isNaN(newLoanAmount) || isNaN(newLoanTerm) || isNaN(newInterestRate)) {
+            alert('Please enter valid numbers for all fields.');
+            return;
+        }
+
+        const customer = state.customers.find(c => c.id === customerId);
+        const requiredAmount = customer.balance + customer.lateFees;
+        // FIX: Compare the numbers after rounding them to 2 decimal places to avoid floating point errors
+        if (parseFloat(newLoanAmount.toFixed(2)) < parseFloat(requiredAmount.toFixed(2))) {
+            alert('The new loan amount must be equal to or greater than the current balance plus any accrued late fees.');
+            return;
+        }
+
+        const { pi, total } = calculateMonthlyPayment(newLoanAmount, newLoanTerm, newInterestRate, customer.escrow);
+
+        customer.originalLoan = newLoanAmount;
+        customer.balance = newLoanAmount;
+        customer.term = newLoanTerm;
+        customer.interest = newInterestRate;
+        customer.monthlyPI = pi;
+        customer.monthlyTotal = total;
+        customer.paymentHistory = []; // Reset payment history for the new loan
+        customer.lateFees = 0;
+        customer.lastPaymentDueDate = new Date().toISOString(); // Reset due date to today
+
+        saveState();
+        closeModal('refinanceModal');
+        alert('Loan successfully refinanced!');
+        showPage('payoff');
+    });
+
+    // --- REVERSE PAYMENT FUNCTIONALITY ---
+    window.reversePayment = (paymentId, fromModal = false) => {
+        if (!confirm('Are you sure you want to reverse this payment? This action cannot be undone.')) {
+            return;
+        }
+
+        const paymentIndex = state.payments.findIndex(p => p.id === paymentId);
+        if (paymentIndex === -1) {
+            alert('Payment not found.');
+            return;
+        }
+
+        const payment = state.payments[paymentIndex];
+        const customer = state.customers.find(c => c.id === payment.customerId);
+
+        if (!customer) {
+            alert('Customer not found for this payment.');
+            return;
+        }
+
+        // Add back the principal, escrow, and late fees
+        customer.balance += payment.regularPrincipal + payment.additionalPrincipal;
+        customer.escrowBalance -= payment.escrow;
+        // Do not add back late fees as they are re-calculated
+        // customer.lateFees += payment.lateFee;
+
+        // Remove the payment from global state and customer's history
+        state.payments.splice(paymentIndex, 1);
+        customer.paymentHistory = customer.paymentHistory.filter(id => id !== paymentId);
+
+        saveState();
+        alert('Payment successfully reversed!');
+        
+        // Refresh the UI depending on where the action was initiated
+        if (fromModal) {
+            closeModal('historyModal');
+        }
+        showPage('payments');
+    };
+
+    
+    // --- INITIALIZATION ---
+    function initializeApp() {
+        loadState();
+        showPage('home'); // Start on the home page
+        // Re-attach event listeners that might be lost during print hack
+        document.getElementById('customerForm').addEventListener('submit', (e) => { e.preventDefault(); /* handler logic is already defined */ });
+        document.getElementById('paymentForm').addEventListener('submit', (e) => { e.preventDefault(); /* handler logic is already defined */ });
+        loanInputs.forEach(input => input.addEventListener('input', updatePaymentEstimate));
+        document.getElementById('pName').addEventListener('change', updatePaymentSummary);
+        document.getElementById('numberOfPayments').addEventListener('input', updateCalculatedPayments);
+        // Re-attach refinance form listener
+        document.getElementById('refinanceForm').addEventListener('submit', (e) => { e.preventDefault(); /* handler logic is already defined */ });
+    }
+    
+    // Initial check on page load
+    if (localStorage.getItem('origins_logged_in') === 'true') {
+        loginScreen.style.display = 'none';
+        mainApp.style.display = 'block';
+        initializeApp();
+    }
+});
+</script>
+</body>
+</html>
